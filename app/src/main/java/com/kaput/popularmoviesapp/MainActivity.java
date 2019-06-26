@@ -1,19 +1,18 @@
-package com.kaput.pupularmoviesapp;
+package com.kaput.popularmoviesapp;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListAdapter;
-import android.widget.ListView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.kaput.pupularmoviesapp.api.APIService;
-import com.kaput.pupularmoviesapp.api.APIUrl;
-import com.kaput.pupularmoviesapp.model.Movie;
-import com.kaput.pupularmoviesapp.model.ResponseBody;
+import com.kaput.popularmoviesapp.model.MovieListItem;
+import com.kaput.popularmoviesapp.R;
+import com.kaput.popularmoviesapp.api.APIService;
+import com.kaput.popularmoviesapp.api.APIUrl;
+import com.kaput.popularmoviesapp.model.Movie;
+import com.kaput.popularmoviesapp.model.ResponseBody;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,14 +26,18 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class MainActivity extends AppCompatActivity {
 
     private List<Movie> movieList;
-    private ListView movieListView;
+    private RecyclerView movieRecyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        movieListView = findViewById(R.id.movie_list);
+        movieRecyclerView = findViewById(R.id.movie_recycler_view);
+
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        movieRecyclerView.setLayoutManager(linearLayoutManager);
 
         Gson gson = new GsonBuilder().setLenient().create();
         Retrofit retrofit = new Retrofit.Builder().baseUrl(APIUrl.BASE_URL).addConverterFactory(GsonConverterFactory.create(gson)).build();
@@ -58,13 +61,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void listToListView() {
-        List<String> movieTitleList = new ArrayList<>();
-        for (Movie m: movieList) {
-            movieTitleList.add(m.title);
 
+        ArrayList<MovieListItem> itemList = new ArrayList<>();
+        for (int i = 0 ; i<movieList.size(); i ++) {
+            itemList.add(new MovieListItem(i + 1,
+                                            movieList.get(i).rating,
+                                            movieList.get(i).title,
+                                            movieList.get(i).posterPath));
         }
-        ArrayAdapter<String> movieAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1
-        , movieTitleList);
-        movieListView.setAdapter(movieAdapter);
+
+        MovieAdapter movieAdapter = new MovieAdapter(this, itemList);
+        movieRecyclerView.setAdapter(movieAdapter);
     }
 }

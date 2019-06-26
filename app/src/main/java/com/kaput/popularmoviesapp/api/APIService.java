@@ -1,9 +1,8 @@
-package com.kaput.pupularmoviesapp.api;
+package com.kaput.popularmoviesapp.api;
 
-import com.kaput.pupularmoviesapp.model.ResponseBody;
+import com.kaput.popularmoviesapp.model.ResponseBody;
 
 import retrofit2.Call;
-import retrofit2.Response;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
 

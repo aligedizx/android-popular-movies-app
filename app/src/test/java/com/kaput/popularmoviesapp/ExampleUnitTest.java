@@ -1,4 +1,4 @@
-package com.kaput.pupularmoviesapp;
+package com.kaput.popularmoviesapp;
 
 import org.junit.Test;
 

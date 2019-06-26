@@ -1,4 +1,4 @@
-package com.kaput.pupularmoviesapp;
+package com.kaput.popularmoviesapp;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

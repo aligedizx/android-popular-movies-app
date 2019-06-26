@@ -1,4 +1,4 @@
-package com.kaput.pupularmoviesapp.model;
+package com.kaput.popularmoviesapp.model;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
