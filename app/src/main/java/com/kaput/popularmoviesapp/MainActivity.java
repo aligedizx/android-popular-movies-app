@@ -38,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         movieRecyclerView.setLayoutManager(linearLayoutManager);
+        movieRecyclerView.setHasFixedSize(true);
+        movieRecyclerView.setItemViewCacheSize(20);
 
         Gson gson = new GsonBuilder().setLenient().create();
         Retrofit retrofit = new Retrofit.Builder().baseUrl(APIUrl.BASE_URL).addConverterFactory(GsonConverterFactory.create(gson)).build();
@@ -71,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         MovieAdapter movieAdapter = new MovieAdapter(this, itemList);
+        movieAdapter.setHasStableIds(true);
         movieRecyclerView.setAdapter(movieAdapter);
     }
 }

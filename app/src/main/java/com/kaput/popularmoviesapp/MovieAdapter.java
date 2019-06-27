@@ -1,6 +1,8 @@
 package com.kaput.popularmoviesapp;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.os.StrictMode;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,6 +15,8 @@ import com.kaput.popularmoviesapp.model.Movie;
 import com.kaput.popularmoviesapp.R;
 import com.kaput.popularmoviesapp.model.MovieListItem;
 
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,18 +50,22 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MyViewHolder
         return movieList.size();
     }
 
+    @Override
+    public long getItemId(int position) {
+        return movieList.get(position).getRanking();
+    }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
         TextView title, rating, ranking;
-        ImageView productImage;
+        ImageView poster;
 
         public MyViewHolder(View itemView) {
             super(itemView);
             title = (TextView) itemView.findViewById(R.id.title);
             rating = (TextView) itemView.findViewById(R.id.rating);
             ranking= (TextView) itemView.findViewById(R.id.ranking);
-            productImage = (ImageView) itemView.findViewById(R.id.poster);
+            poster = (ImageView) itemView.findViewById(R.id.poster);
 
         }
 
@@ -65,6 +73,22 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MyViewHolder
             this.title.setText(m.getTitle());
             this.rating.setText(m.getRating());
             this.ranking.setText(String.valueOf(m.getRanking() + "."));
+            this.poster.setImageDrawable(LoadImageFromWebOperations(m.getPosterPath()));
+        }
+
+        public Drawable LoadImageFromWebOperations(String path) {
+
+            try {
+                StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+                StrictMode.setThreadPolicy(policy);
+                System.out.println("https://image.tmdb.org/t/p/w92" + path);
+                InputStream is = (InputStream) new URL("https://image.tmdb.org/t/p/w185" + path).getContent();
+                Drawable d = Drawable.createFromStream(is, "themoviedb");
+                return d;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
         }
 
     }
