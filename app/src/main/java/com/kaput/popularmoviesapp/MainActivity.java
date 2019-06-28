@@ -1,18 +1,24 @@
 package com.kaput.popularmoviesapp;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProvider;
+import android.arch.lifecycle.ViewModelProviders;
+import android.arch.paging.PagedList;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.kaput.popularmoviesapp.model.MovieListItem;
-import com.kaput.popularmoviesapp.R;
 import com.kaput.popularmoviesapp.api.APIService;
-import com.kaput.popularmoviesapp.api.APIUrl;
+import com.kaput.popularmoviesapp.api.API;
 import com.kaput.popularmoviesapp.model.Movie;
 import com.kaput.popularmoviesapp.model.ResponseBody;
+import com.kaput.popularmoviesapp.viewmodel.MovieViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,10 +29,11 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity  {
 
     private List<Movie> movieList;
     private RecyclerView movieRecyclerView;
+    private MovieViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,41 +46,23 @@ public class MainActivity extends AppCompatActivity {
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         movieRecyclerView.setLayoutManager(linearLayoutManager);
         movieRecyclerView.setHasFixedSize(true);
-        movieRecyclerView.setItemViewCacheSize(20);
+        movieRecyclerView.setItemViewCacheSize(40);
 
-        Gson gson = new GsonBuilder().setLenient().create();
-        Retrofit retrofit = new Retrofit.Builder().baseUrl(APIUrl.BASE_URL).addConverterFactory(GsonConverterFactory.create(gson)).build();
+        viewModel = ViewModelProviders.of(this).get(MovieViewModel.class);
 
-        APIService apis = retrofit.create(APIService.class);
-        Call<ResponseBody> call = apis.getDatum("f44ae99022116e67fae910b2c8a2a3c2", 1);
-        call.enqueue(new Callback<ResponseBody>() {
+        final MovieAdapter movieAdapter = new MovieAdapter();
+
+        viewModel.movieList.observe(this, new Observer<PagedList<Movie>>() {
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                movieList = response.body().getMovies();
-                listToListView();
-
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-
+            public void onChanged(@Nullable PagedList<Movie> pagedList) {
+                movieAdapter.submitList(pagedList);
             }
         });
 
-    }
-
-    private void listToListView() {
-
-        ArrayList<MovieListItem> itemList = new ArrayList<>();
-        for (int i = 0 ; i<movieList.size(); i ++) {
-            itemList.add(new MovieListItem(i + 1,
-                                            movieList.get(i).rating,
-                                            movieList.get(i).title,
-                                            movieList.get(i).posterPath));
-        }
-
-        MovieAdapter movieAdapter = new MovieAdapter(this, itemList);
-        movieAdapter.setHasStableIds(true);
         movieRecyclerView.setAdapter(movieAdapter);
+
+
+
     }
+
 }

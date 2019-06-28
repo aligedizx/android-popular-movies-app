@@ -1,10 +1,13 @@
 package com.kaput.popularmoviesapp;
 
+import android.arch.paging.PagedListAdapter;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.StrictMode;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,39 +24,51 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MyViewHolder> {
+public class MovieAdapter extends PagedListAdapter<Movie, MovieAdapter.MyViewHolder> {
 
-    ArrayList<MovieListItem> movieList;
+    //ArrayList<Movie> movieList;
     LayoutInflater inflater;
+    Context context;
 
-    public MovieAdapter(Context context, ArrayList<MovieListItem> movieList) {
-        this.movieList = movieList;
-        this.inflater = LayoutInflater.from(context);
+    public MovieAdapter() {
+        super(Movie.DIFF_CALLBACK);
     }
 
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
-        View view = inflater.inflate(R.layout.custom_item_card, parent, false);
-        MyViewHolder holder = new MyViewHolder(view);
-        return holder;
+       /* View vieww = inflater.inflate(R.layout.custom_item_card, parent, false);
+        MyViewHolder holder = new MyViewHolder(vieww);
+        return holder;*/
+
+
+
+
+
+        LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
+        View view;
+
+
+
+
+        view = layoutInflater.inflate(R.layout.custom_item_card, parent, false);
+        return new MyViewHolder(view);
+
+
+
     }
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder myViewHolder, int i) {
-        MovieListItem selectedMovie = movieList.get(i);
-        myViewHolder.setData(selectedMovie, i);
+
+        myViewHolder.setData(getItem(i));
     }
 
-    @Override
-    public int getItemCount() {
-        return movieList.size();
-    }
-
-    @Override
+   /* @Override
     public long getItemId(int position) {
-        return movieList.get(position).getRanking();
+        return movieList.get(position).ranking;
     }
+*/
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
@@ -69,11 +84,11 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MyViewHolder
 
         }
 
-        public void setData(MovieListItem m, int position) {
-            this.title.setText(m.getTitle());
-            this.rating.setText(m.getRating());
-            this.ranking.setText(String.valueOf(m.getRanking() + "."));
-            this.poster.setImageDrawable(LoadImageFromWebOperations(m.getPosterPath()));
+        public void setData(Movie m) {
+            this.title.setText(m.title);
+            this.rating.setText(m.rating);
+            this.ranking.setText(String.valueOf(m.ranking + "."));
+            this.poster.setImageDrawable(LoadImageFromWebOperations(m.posterPath));
         }
 
         public Drawable LoadImageFromWebOperations(String path) {
@@ -81,7 +96,6 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MyViewHolder
             try {
                 StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
                 StrictMode.setThreadPolicy(policy);
-                System.out.println("https://image.tmdb.org/t/p/w92" + path);
                 InputStream is = (InputStream) new URL("https://image.tmdb.org/t/p/w185" + path).getContent();
                 Drawable d = Drawable.createFromStream(is, "themoviedb");
                 return d;
