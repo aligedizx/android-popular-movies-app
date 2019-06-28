@@ -4,6 +4,7 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.arch.paging.PagedList;
+import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import com.kaput.popularmoviesapp.api.APIService;
 import com.kaput.popularmoviesapp.api.API;
 import com.kaput.popularmoviesapp.model.Movie;
 import com.kaput.popularmoviesapp.model.ResponseBody;
+import com.kaput.popularmoviesapp.util.OnMovieClickListener;
 import com.kaput.popularmoviesapp.viewmodel.MovieViewModel;
 
 import java.util.ArrayList;
@@ -29,7 +31,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class MainActivity extends AppCompatActivity  {
+public class MainActivity extends AppCompatActivity implements OnMovieClickListener {
 
     private List<Movie> movieList;
     private RecyclerView movieRecyclerView;
@@ -50,7 +52,7 @@ public class MainActivity extends AppCompatActivity  {
 
         viewModel = ViewModelProviders.of(this).get(MovieViewModel.class);
 
-        final MovieAdapter movieAdapter = new MovieAdapter();
+        final MovieAdapter movieAdapter = new MovieAdapter(this);
 
         viewModel.movieList.observe(this, new Observer<PagedList<Movie>>() {
             @Override
@@ -65,4 +67,10 @@ public class MainActivity extends AppCompatActivity  {
 
     }
 
+    @Override
+    public void onClick(View view, Movie m) {
+        Intent i = new Intent(this, MovieDetailActivity.class);
+        i.putExtra("title", m.title);
+        startActivity(i);
+    }
 }

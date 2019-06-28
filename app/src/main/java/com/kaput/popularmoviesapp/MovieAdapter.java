@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.kaput.popularmoviesapp.model.Movie;
 import com.kaput.popularmoviesapp.R;
 import com.kaput.popularmoviesapp.model.MovieListItem;
+import com.kaput.popularmoviesapp.util.OnMovieClickListener;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -29,30 +30,19 @@ public class MovieAdapter extends PagedListAdapter<Movie, MovieAdapter.MyViewHol
     //ArrayList<Movie> movieList;
     LayoutInflater inflater;
     Context context;
+    private OnMovieClickListener listener;
 
-    public MovieAdapter() {
+    public MovieAdapter(OnMovieClickListener listener) {
         super(Movie.DIFF_CALLBACK);
+        this.listener = listener;
     }
 
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
-       /* View vieww = inflater.inflate(R.layout.custom_item_card, parent, false);
-        MyViewHolder holder = new MyViewHolder(vieww);
-        return holder;*/
-
-
-
-
-
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        View view;
-
-
-
-
-        view = layoutInflater.inflate(R.layout.custom_item_card, parent, false);
-        return new MyViewHolder(view);
+        View view = layoutInflater.inflate(R.layout.custom_item_card, parent, false);
+        return new MyViewHolder(view, listener);
 
 
 
@@ -75,12 +65,19 @@ public class MovieAdapter extends PagedListAdapter<Movie, MovieAdapter.MyViewHol
         TextView title, rating, ranking;
         ImageView poster;
 
-        public MyViewHolder(View itemView) {
+        public MyViewHolder(final View itemView, final OnMovieClickListener listener) {
             super(itemView);
             title = (TextView) itemView.findViewById(R.id.title);
             rating = (TextView) itemView.findViewById(R.id.rating);
             ranking= (TextView) itemView.findViewById(R.id.ranking);
             poster = (ImageView) itemView.findViewById(R.id.poster);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onClick(itemView, getItem(getAdapterPosition()));
+                }
+            });
 
         }
 
