@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
+import com.kaput.popularmoviesapp.api.API;
 import com.kaput.popularmoviesapp.model.Movie;
 import com.kaput.popularmoviesapp.R;
 import com.kaput.popularmoviesapp.model.MovieListItem;
@@ -96,7 +97,7 @@ public class MovieAdapter extends PagedListAdapter<Movie, MovieAdapter.MyViewHol
 
         private void loadImageFromUrl(RequestManager glide, String path, ImageView view ){
             //System.out.println("https://image.tmdb.org/t/p/w185" + path);
-            glide.load("https://image.tmdb.org/t/p/w185" + path).override(185,278).into(view);
+            glide.load(API.SMALL_IMAGE_BASE_URL + path).override(185,278).into(view);
         }
 
     }

@@ -34,12 +34,21 @@ public class Movie implements Parcelable {
     @SerializedName("vote_average")
     @Expose
     public String rating;
+    @SerializedName("release_date")
+    @Expose
+    public String releaseDate;
+    @SerializedName("overview")
+    @Expose
+    public String overview;
+
 
     protected Movie(Parcel in) {
         ranking = in.readInt();
         title = in.readString();
         posterPath = in.readString();
         rating = in.readString();
+        releaseDate = in.readString();
+        overview = in.readString();
     }
 
     public static final Creator<Movie> CREATOR = new Creator<Movie>() {
@@ -81,5 +90,7 @@ public class Movie implements Parcelable {
         dest.writeString(title);
         dest.writeString(posterPath);
         dest.writeString(rating);
+        dest.writeString(releaseDate);
+        dest.writeString(overview);
     }
 }
