@@ -12,6 +12,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
+import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.kaput.popularmoviesapp.model.MovieListItem;
@@ -52,7 +53,8 @@ public class MainActivity extends AppCompatActivity implements OnMovieClickListe
 
         viewModel = ViewModelProviders.of(this).get(MovieViewModel.class);
 
-        final MovieAdapter movieAdapter = new MovieAdapter(this);
+        final MovieAdapter movieAdapter = new MovieAdapter(this, Glide.with(this));
+
 
         viewModel.movieList.observe(this, new Observer<PagedList<Movie>>() {
             @Override
@@ -70,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements OnMovieClickListe
     @Override
     public void onClick(View view, Movie m) {
         Intent i = new Intent(this, MovieDetailActivity.class);
-        i.putExtra("title", m.title);
+        i.putExtra("movie", m);
         startActivity(i);
     }
 }

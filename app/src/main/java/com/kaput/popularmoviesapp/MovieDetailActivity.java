@@ -4,6 +4,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import com.kaput.popularmoviesapp.model.Movie;
+
 public class MovieDetailActivity extends AppCompatActivity {
 
     TextView titleView;
@@ -15,7 +17,7 @@ public class MovieDetailActivity extends AppCompatActivity {
 
         titleView = findViewById(R.id.movie_title);
 
-        String title = getIntent().getStringExtra("title");
-        titleView.setText(title);
+        Movie m = getIntent().getParcelableExtra("movie");
+        titleView.setText(m.title);
     }
 }

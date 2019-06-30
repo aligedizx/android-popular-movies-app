@@ -14,6 +14,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestManager;
 import com.kaput.popularmoviesapp.model.Movie;
 import com.kaput.popularmoviesapp.R;
 import com.kaput.popularmoviesapp.model.MovieListItem;
@@ -31,10 +33,12 @@ public class MovieAdapter extends PagedListAdapter<Movie, MovieAdapter.MyViewHol
     LayoutInflater inflater;
     Context context;
     private OnMovieClickListener listener;
+    private RequestManager glide;
 
-    public MovieAdapter(OnMovieClickListener listener) {
+    public MovieAdapter(OnMovieClickListener listener, RequestManager glide) {
         super(Movie.DIFF_CALLBACK);
         this.listener = listener;
+        this.glide = glide;
     }
 
     @NonNull
@@ -51,7 +55,7 @@ public class MovieAdapter extends PagedListAdapter<Movie, MovieAdapter.MyViewHol
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder myViewHolder, int i) {
 
-        myViewHolder.setData(getItem(i));
+        myViewHolder.setData(getItem(i), glide);
     }
 
    /* @Override
@@ -81,25 +85,18 @@ public class MovieAdapter extends PagedListAdapter<Movie, MovieAdapter.MyViewHol
 
         }
 
-        public void setData(Movie m) {
+        public void setData(Movie m, RequestManager glide) {
             this.title.setText(m.title);
             this.rating.setText(m.rating);
             this.ranking.setText(String.valueOf(m.ranking + "."));
-            this.poster.setImageDrawable(LoadImageFromWebOperations(m.posterPath));
+            if (m.posterPath != null)
+                loadImageFromUrl(glide, m.posterPath, this.poster);
         }
 
-        public Drawable LoadImageFromWebOperations(String path) {
 
-            try {
-                StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-                StrictMode.setThreadPolicy(policy);
-                InputStream is = (InputStream) new URL("https://image.tmdb.org/t/p/w185" + path).getContent();
-                Drawable d = Drawable.createFromStream(is, "themoviedb");
-                return d;
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
-            }
+        private void loadImageFromUrl(RequestManager glide, String path, ImageView view ){
+            //System.out.println("https://image.tmdb.org/t/p/w185" + path);
+            glide.load("https://image.tmdb.org/t/p/w185" + path).override(185,278).into(view);
         }
 
     }
