@@ -11,8 +11,9 @@ public class API {
     public static final int DEFAULT_PER_PAGE = 20;
     public static final String SMALL_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w92";
     public static final String BIG_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w780";
+    public static final String API_KEY = "f44ae99022116e67fae910b2c8a2a3c2";
 
-    public static APIService createAPIService(){
+    public static APIService createAPIService() {
         Gson gson = new GsonBuilder().setLenient().create();
         Retrofit retrofit = new Retrofit.Builder().baseUrl(BASE_URL).addConverterFactory(GsonConverterFactory.create(gson)).build();
 

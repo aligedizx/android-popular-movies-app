@@ -28,9 +28,9 @@ public class MovieViewModel extends ViewModel {
     };
 
     public MovieViewModel(){
-
         MovieDataFactory movieDataFactory = new MovieDataFactory(executor);
 
+        //Its config of get movies page by page
         PagedList.Config config = new PagedList.Config.Builder()
                 .setPageSize(API.DEFAULT_PER_PAGE)
                 .setInitialLoadSizeHint(API.DEFAULT_PER_PAGE)

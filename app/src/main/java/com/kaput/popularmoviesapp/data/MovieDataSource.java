@@ -22,9 +22,10 @@ public class MovieDataSource extends PageKeyedDataSource<Integer, Movie> {
     Integer pageNumber;
     private Executor executor;
     int ranking;
+    int totalPageNumber;
 
 
-    public MovieDataSource(Executor executor){
+    public MovieDataSource(Executor executor) {
         apiService = API.createAPIService();
         pageNumber = 1;
         this.executor = executor;
@@ -36,26 +37,26 @@ public class MovieDataSource extends PageKeyedDataSource<Integer, Movie> {
         final List<Movie> movieList = new ArrayList();
 
         apiService = API.createAPIService();
-            apiService.getDatum("f44ae99022116e67fae910b2c8a2a3c2", pageNumber).enqueue(new Callback<ResponseBody>() {
-                @Override
-                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+        apiService.getDatum(API.API_KEY, pageNumber).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
 
-                    for (Movie m:response.body().getMovies()) {
-                        m.setRanking(ranking++);
-                        movieList.add(m);
-                    }
+                //for to stop get movies
+                totalPageNumber = response.body().totalPages;
 
-                   // movieList.addAll(response.body().getMovies());
-                    pageNumber++;
-                    callback.onResult(movieList, null, pageNumber);
+                //adding rankings to movies
+                for (Movie m : response.body().getMovies()) {
+                    m.setRanking(ranking++);
+                    movieList.add(m);
                 }
 
-                @Override
-                public void onFailure(Call<ResponseBody> call, Throwable t) {
-                }
-
-
-            });
+                pageNumber++;
+                callback.onResult(movieList, null, pageNumber); //it set datas
+            }
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+            }
+        });
 
     }
 
@@ -68,23 +69,28 @@ public class MovieDataSource extends PageKeyedDataSource<Integer, Movie> {
     @Override
     public void loadAfter(@NonNull final LoadParams<Integer> params, @NonNull final LoadCallback<Integer, Movie> callback) {
         final List<Movie> movieList = new ArrayList();
+        if (params.key < totalPageNumber) {
 
-        apiService.getDatum("f44ae99022116e67fae910b2c8a2a3c2", params.key).enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                for (Movie m:response.body().getMovies()) {
-                    m.setRanking(ranking++);
-                    movieList.add(m);
+            apiService.getDatum(API.API_KEY, params.key).enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+
+                    //adding rankings to movies
+                    for (Movie m : response.body().getMovies()) {
+                        m.setRanking(ranking++);
+                        movieList.add(m);
+                    }
+                    callback.onResult(movieList, params.key + 1); //it set datas
                 }
-                callback.onResult(movieList, params.key + 1);
-            }
 
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-            }
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                }
 
 
-        });
+            });
+
+        }
 
     }
 }
